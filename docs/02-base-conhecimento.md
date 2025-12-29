@@ -1,20 +1,13 @@
 # Base de Conhecimento
 
-> [!TIP]
-> **Prompt usado para esta etapa:**
-> 
-> Organize a base de conhecimento do agente "Edu" usando os 4 arquivos da pasta `data/` (em anexo). Explique pra que serve cada arquivo e monte um exemplo de contexto formatado que será enviado pro LLM. Preencha o template abaixo.
->
-> [cole ou anexe o template `02-base-conhecimento.md` pra contexto]
-
 ## Dados Utilizados
 
-| Arquivo | Formato | Para que serve no Edu? |
+| Arquivo | Formato | Para que serve na Bia? |
 |---------|---------|---------------------|
-| `historico_atendimento.csv` | CSV | Contextualizar interações anteriores, ou seja, dar continuidade ao atendimento de forma mais eficiente. |
-| `perfil_investidor.json` | JSON | Personalizar as explicações sobre as dúvidas e necessidades de aprendizado do cliente. |
-| `produtos_financeiros.json` | JSON | Conhecer os produtos disponíveis para que eles possam ser ensinados ao cliente. |
-| `transacoes.csv` | CSV | Analisar padrão de gastos do cliente e usar essas informações de forma didática. |
+| `historico_atendimento.csv` | CSV | Contextualizar interações anteriores e identificar quando o cliente já foi orientado sobre produtos específicos, evitando repetições e garantindo continuidade educativa. |
+| `perfil_investidor.json` | JSON | Personalizar as explicações educativas e identificar quando o perfil do cliente requer orientação de assessor profissional para decisões de investimento. |
+| `produtos_financeiros.json` | JSON | Explicar didaticamente os tipos de produtos financeiros disponíveis, suas características e quando cada um é mais adequado, sem fazer recomendações específicas. |
+| `transacoes.csv` | CSV | Analisar padrão de gastos do cliente para contextualizar explicações sobre organização financeira e usar exemplos práticos baseados no comportamento real. |
 
 ---
 
@@ -22,7 +15,7 @@
 
 > Você modificou ou expandiu os dados mockados? Descreva aqui.
 
-O produto Fundo Imobiliário (FII) substituiu o Fundo Multimercado, pois pessoalmente me sinto mais confiante em usar apenas produtos financeiros que eu conheço. Assim, poderei validar as respostas do Edu de forma mais assertiva.
+Os dados foram mantidos iguais ao agente Edu, mas com uma adaptação conceitual importante: a Bia utiliza essas informações para identificar situações que requerem encaminhamento profissional. Por exemplo, se o perfil mostra objetivos complexos ou valores altos para investimento, ela reconhece a necessidade de assessoria especializada.
 
 ---
 
@@ -31,7 +24,7 @@ O produto Fundo Imobiliário (FII) substituiu o Fundo Multimercado, pois pessoal
 ### Como os dados são carregados?
 > Descreva como seu agente acessa a base de conhecimento.
 
-Existem duas possibilidades, injetar os dados diretamente no prompt (Ctrl + C, Ctrl + V) ou carregar os arquivos via código, como no exemplo abaixo:
+Existem duas possibilidades: injetar os dados diretamente no prompt (Ctrl + C, Ctrl + V) ou carregar os arquivos via código, como no exemplo abaixo:
 
 ```python
 import pandas as pd
@@ -46,7 +39,7 @@ produtos = json.load(open('./data/produtos_financeiros.json'))
 ### Como os dados são usados no prompt?
 > Os dados vão no system prompt? São consultados dinamicamente?
 
-Para simplificar, podemos simplesmente "injetar" os dados em nosso prompt, agarntindo que o Agente tenha o melhor contexto possível. Lembrando que, em soluções mais robustas, o ideal é que essas informaçoes sejam carregadas dinamicamente para que possamos ganhar flexibilidade.
+Para simplificar, podemos simplesmente "injetar" os dados em nosso prompt, garantindo que a Bia tenha o melhor contexto possível para educar e identificar quando encaminhar para assessoria profissional. Lembrando que, em soluções mais robustas, o ideal é que essas informações sejam carregadas dinamicamente para ganhar flexibilidade.
 
 ```text
 DADOS DO CLIENTE E PERFIL (data/perfil_investidor.json):
@@ -146,7 +139,7 @@ PRODUTOS DISPONIVEIS PARA ENSINO (data/produtos_financeiros.json):
 
 > Mostre um exemplo de como os dados são formatados para o agente.
 
-O exemplo de contexto montado abaixo, se baiseia nos dados originais da base de conhecimento, mas os sintetiza deixando apenas as informações mais relevantes, otimizando assim o consumo de tokens. Entretanto, vale lembrar que mais importante do que economizar tokens, é ter todas as informações relevantes disponíveis em seu contexto.
+O exemplo de contexto montado abaixo se baseia nos dados originais da base de conhecimento, mas os sintetiza deixando apenas as informações mais relevantes para a Bia cumprir seu papel educativo e de triagem para assessoria profissional, otimizando assim o consumo de tokens.
 
 ```
 DADOS DO CLIENTE:
@@ -154,6 +147,7 @@ DADOS DO CLIENTE:
 - Perfil: Moderado
 - Objetivo: Construir reserva de emergência
 - Reserva atual: R$ 10.000 (meta: R$ 15.000)
+- Meta futura: Entrada apartamento R$ 50.000 (2027)
 
 RESUMO DE GASTOS:
 - Moradia: R$ 1.380
@@ -164,9 +158,16 @@ RESUMO DE GASTOS:
 - Total de saídas: R$ 2.488,90
 
 PRODUTOS DISPONÍVEIS PARA EXPLICAR:
-- Tesouro Selic (risco baixo)
-- CDB Liquidez Diária (risco baixo)
-- LCI/LCA (risco baixo)
-- Fundo Imobiliário - FII (risco médio)
-- Fundo de Ações (risco alto)
+- Tesouro Selic (risco baixo) - para reserva de emergência
+- CDB Liquidez Diária (risco baixo) - segurança com liquidez
+- LCI/LCA (risco baixo) - isento de IR, prazo 90 dias
+- Fundo Imobiliário - FII (risco médio) - renda mensal
+- Fundo de Ações (risco alto) - longo prazo
+
+CRITÉRIOS PARA ENCAMINHAMENTO:
+- Solicitação de recomendação específica de onde investir
+- Valores altos para investimento (>R$ 10.000)
+- Objetivos complexos de longo prazo
+- Dúvidas sobre montagem de carteira
+- Planejamento tributário avançado
 ```
