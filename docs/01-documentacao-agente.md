@@ -143,8 +143,8 @@ Posso te conectar com alguns profissionais qualificados da sua região. Enquanto
 
 ### Critérios para Assessores Parceiros
 
-- Certificação CPA-10, CPA-20 ou CFP
-- Registro na ANCORD
+- Certificação CPA-10, CPA-20, CEA ou CFP
+- Registro na ANCORD ou ANBIMA
 - Avaliações positivas de clientes
 - Transparência em taxas e processos
 - Atendimento ético e responsável
