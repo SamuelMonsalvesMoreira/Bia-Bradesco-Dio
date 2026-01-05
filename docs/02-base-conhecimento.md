@@ -1,5 +1,7 @@
 # Base de Conhecimento
 
+Este documento descreve a estrutura e organização da base de conhecimento utilizada pela Bia, nossa consultora financeira educativa.
+
 ## Dados Utilizados
 
 | Arquivo | Formato | Para que serve na Bia? |
@@ -8,6 +10,7 @@
 | `perfil_investidor.json` | JSON | Personalizar as explicações educativas e identificar quando o perfil do cliente requer orientação de assessor profissional para decisões de investimento. |
 | `produtos_financeiros.json` | JSON | Explicar didaticamente os tipos de produtos financeiros disponíveis, suas características e quando cada um é mais adequado, sem fazer recomendações específicas. |
 | `transacoes.csv` | CSV | Analisar padrão de gastos do cliente para contextualizar explicações sobre organização financeira e usar exemplos práticos baseados no comportamento real. |
+| `taxas_referencia.json` | JSON | Fornecer informações atualizadas sobre Selic e CDI para explicar rentabilidades de forma precisa e contextualizada com dados reais do mercado. |
 
 ---
 
@@ -15,7 +18,11 @@
 
 > Você modificou ou expandiu os dados mockados? Descreva aqui.
 
-Os dados foram mantidos iguais ao agente Edu, mas com uma adaptação conceitual importante: a Bia utiliza essas informações para identificar situações que requerem encaminhamento profissional. Por exemplo, se o perfil mostra objetivos complexos ou valores altos para investimento, ela reconhece a necessidade de assessoria especializada.
+A Bia utiliza essas informações para identificar situações que requerem encaminhamento profissional. Por exemplo, se o perfil mostra objetivos complexos ou valores altos para investimento, ela reconhece a necessidade de assessoria especializada.
+
+> Adição de Taxas de Referência.
+
+Foi incluído o arquivo taxas_referencia.json com dados atuais da Selic (15,0%) e CDI (14,95%), permitindo que a Bia forneça informações precisas sobre rentabilidades e faça cálculos educativos mais realistas.
 
 ---
 
@@ -30,20 +37,24 @@ Existem duas possibilidades: injetar os dados diretamente no prompt (Ctrl + C, C
 import pandas as pd
 import json
 
+# Carregamento dos arquivos
 perfil = json.load(open('./data/perfil_investidor.json'))
 transacoes = pd.read_csv('./data/transacoes.csv')
 historico = pd.read_csv('./data/historico_atendimento.csv')
 produtos = json.load(open('./data/produtos_financeiros.json'))
+taxas = json.load(open('./data/taxas_referencia.json'))
 ```
 
 ### Como os dados são usados no prompt?
 > Os dados vão no system prompt? São consultados dinamicamente?
 
-Para simplificar, podemos simplesmente "injetar" os dados em nosso prompt, garantindo que a Bia tenha o melhor contexto possível para educar e identificar quando encaminhar para assessoria profissional. Lembrando que, em soluções mais robustas, o ideal é que essas informações sejam carregadas dinamicamente para ganhar flexibilidade.
+Para simplificar, os dados são "injetados" diretamente no prompt, garantindo que a Bia tenha o melhor contexto possível para educar e identificar quando encaminhar para assessoria profissional.
+> 💡 Nota: Em soluções mais robustas, o ideal é que essas informações sejam carregadas dinamicamente para ganhar flexibilidade.
 
 ```text
 DADOS DO CLIENTE E PERFIL (data/perfil_investidor.json):
 {
+  {
   "nome": "João Silva",
   "idade": 32,
   "profissao": "Analista de Sistemas",
@@ -53,6 +64,7 @@ DADOS DO CLIENTE E PERFIL (data/perfil_investidor.json):
   "patrimonio_total": 15000.00,
   "reserva_emergencia_atual": 10000.00,
   "aceita_risco": false,
+ }
   "metas": [
     {
       "meta": "Completar reserva de emergência",
@@ -65,6 +77,22 @@ DADOS DO CLIENTE E PERFIL (data/perfil_investidor.json):
       "prazo": "2027-12"
     }
   ]
+}
+
+
+Taxas de Referência ('./data/taxas_referencia.json'):
+
+{
+  "selic": {
+    "valor": 15.0,
+    "data_referencia": "2025-12-30",
+    "fonte": "Banco Central do Brasil"
+  },
+  "cdi": {
+    "valor": 14.95,
+    "data_referencia": "2025-12-30",
+    "fonte": "CETIP / B3"
+  }
 }
 
 TRANSACOES DO CLIENTE (data/transacoes.csv):
@@ -129,6 +157,14 @@ PRODUTOS DISPONIVEIS PARA ENSINO (data/produtos_financeiros.json):
     "rentabilidade": "Variável",
     "aporte_minimo": 100.00,
     "indicado_para": "Perfil arrojado com foco no longo prazo"
+  },
+  {
+    "nome": "Tesouro Selic",
+    "categoria": "renda_fixa",
+    "risco": "baixo",
+    "rentabilidade": "100% da Selic",
+    "aporte_minimo": 30.00,
+    "indicado_para": "Reserva de emergência e iniciantes"
   }
 ]
 ```
@@ -146,28 +182,43 @@ DADOS DO CLIENTE:
 - Nome: João Silva
 - Perfil: Moderado
 - Objetivo: Construir reserva de emergência
-- Reserva atual: R$ 10.000 (meta: R$ 15.000)
-- Meta futura: Entrada apartamento R$ 50.000 (2027)
+- Reserva atual: R\$ 10.000 (meta: R\$ 15.000)
+- Meta futura: Entrada apartamento R\$ 50.000 (2027)
 
 RESUMO DE GASTOS:
-- Moradia: R$ 1.380
-- Alimentação: R$ 570
-- Transporte: R$ 295
-- Saúde: R$ 188
-- Lazer: R$ 55,90
-- Total de saídas: R$ 2.488,90
+- Moradia: R\$ 1.380
+- Alimentação: R\$ 570
+- Transporte: R\$ 295
+- Saúde: R\$ 188
+- Lazer: R\$ 55,90
+- Total de saídas: R\$ 2.488,90
+
+TAXAS DE REFERÊNCIA ATUAIS (30/12/2025):
+- Selic: 15,0% ao ano
+- CDI: 14,95% ao ano
 
 PRODUTOS DISPONÍVEIS PARA EXPLICAR:
-- Tesouro Selic (risco baixo) - para reserva de emergência
-- CDB Liquidez Diária (risco baixo) - segurança com liquidez
-- LCI/LCA (risco baixo) - isento de IR, prazo 90 dias
-- Fundo Imobiliário - FII (risco médio) - renda mensal
-- Fundo de Ações (risco alto) - longo prazo
+- Tesouro Selic (100% da Selic = ~15% a.a.) - para reserva de emergência
+- CDB Liquidez Diária (102% do CDI = ~15,25% a.a.) - segurança com liquidez
+- LCI/LCA (95% do CDI = ~14,20% a.a.) - isento de IR, prazo 90 dias
+- Fundo Imobiliário - FII (DY 6-12% a.a.) - renda mensal
+- Fundo de Ações (variável) - longo prazo
 
 CRITÉRIOS PARA ENCAMINHAMENTO:
 - Solicitação de recomendação específica de onde investir
-- Valores altos para investimento (>R$ 10.000)
+- Valores altos para investimento (>R\$ 10.000)
 - Objetivos complexos de longo prazo
 - Dúvidas sobre montagem de carteira
 - Planejamento tributário avançado
+
+🚀 Próximos Passos
+ Implementar carregamento dinâmico dos dados
+ Adicionar validação de integridade dos arquivos
+ Criar sistema de cache para otimizar performance
+ Implementar versionamento da base de conhecimento
+
+
+📝 Nota: Esta base de conhecimento é projetada para fins educativos e de demonstração. Em ambiente de produção, considere implementar sistemas mais robustos de gerenciamento de dados.
+
 ```
+
