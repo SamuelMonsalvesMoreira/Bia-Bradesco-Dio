@@ -1,8 +1,6 @@
-# Assets
+# Assets e referência do desafio
 
-Esta pasta é destinada a recursos visuais do seu projeto:
+- `RoteiroLab.md`: roteiro de referência disponibilizado no material do desafio.
+- Imagens futuras da aplicação podem ser adicionadas nesta pasta.
 
-- Diagramas de arquitetura
-- Screenshots da aplicação
-- Mockups de interface
-- Imagens para o README
+A arquitetura atual, os exemplos executáveis e o pitch estão documentados nas pastas `docs/` e `evaluation/`.

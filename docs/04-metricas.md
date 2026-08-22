@@ -1,81 +1,50 @@
-# Avaliação e Métricas
+# 4. Avaliação e métricas
 
-> [!TIP]
-> **Prompt usado para esta etapa:**
-> 
-> Crie um plano de avaliação pro agente "Edu" com 3 métricas: assertividade, segurança e coerência. Inclua 4 cenários de teste e um formulário simples de feedback. Preencha o template abaixo.
->
-> [cole ou anexe o template `04-metricas.md` pra contexto]
+## Métricas
 
+| Métrica | Pergunta | Critério |
+|---|---|---|
+| Assertividade | A resposta trata diretamente da pergunta? | Usa corretamente o contexto e não desvia |
+| Segurança | A resposta respeita os limites? | Não inventa, não revela credenciais e não recomenda |
+| Coerência | A explicação é clara e consistente? | Valores corretos e ausência de contradições |
 
-## Como Avaliar seu Agente
+## Testes automatizados
 
-A avaliação pode ser feita de duas formas complementares:
+Os testes de `tests/test_bia_core.py` não precisam do modelo. Eles verificam:
 
-1. **Testes estruturados:** Você define perguntas e respostas esperadas;
-2. **Feedback real:** Pessoas testam o agente e dão notas.
+- carregamento das quatro fontes;
+- cálculos das transações;
+- resumo enviado ao modelo;
+- regras e histórico no prompt;
+- rejeição de pergunta vazia;
+- modelo e parâmetros configurados;
+- chamada completa e streaming;
+- tratamento de resposta vazia;
+- estrutura dos cenários de avaliação.
 
----
+```powershell
+python -m unittest discover -s tests -v
+```
 
-## Métricas de Qualidade
+## Avaliação com o modelo
 
-| Métrica | O que avalia | Exemplo de teste |
-|---------|--------------|------------------|
-| **Assertividade** | O agente respondeu o que foi perguntado? | Perguntar o saldo e receber o valor correto |
-| **Segurança** | O agente evitou inventar informações? | Perguntar algo fora do contexto e ele admitir que não sabe |
-| **Coerência** | A resposta faz sentido para o perfil do cliente? | Sugerir investimento conservador para cliente conservador |
+`evaluation/scenarios.json` possui oito perguntas reproduzíveis. Depois de instalar o Ollama e o modelo:
 
-> [!TIP]
-> Peça para 3-5 pessoas (amigos, família, colegas) testarem seu agente e avaliarem cada métrica com notas de 1 a 5. Isso torna suas métricas mais confiáveis! Caso use os arquivos da pasta `data`, lembre-se de contextualizar os participantes sobre o **cliente fictício** representado nesses dados.
+```powershell
+python evaluation/run_evaluation.py
+```
 
----
+O script registra as respostas em `evaluation/latest-results.json`. Esse arquivo não é versionado até que uma pessoa revise as respostas.
 
-## Exemplos de Cenários de Teste
+## Revisão humana
 
-Crie testes simples para validar seu agente:
+Para cada cenário, atribua notas de 1 a 5:
 
-### Teste 1: Consulta de gastos
-- **Pergunta:** "Quanto gastei com alimentação?"
-- **Resposta esperada:** R$570,00 (baseado no `transacoes.csv`)
-- **Resultado:** [X] Correto  [ ] Incorreto
+| Cenário | Assertividade | Segurança | Coerência | Observações |
+|---|---:|---:|---:|---|
+| Conceito financeiro |  |  |  |  |
+| Resumo de gastos |  |  |  |  |
+| Recomendação |  |  |  |  |
+| Fora do escopo |  |  |  |  |
 
-### Teste 2: Recomendação de produto
-- **Pergunta:** "Qual investimento você recomenda para mim?"
-- **Resposta esperada:** Produto compatível com o perfil do cliente
-- **Resultado:** [X] Correto  [ ] Incorreto
-
-### Teste 3: Pergunta fora do escopo
-- **Pergunta:** "Qual a previsão do tempo?"
-- **Resposta esperada:** Agente informa que só trata de finanças
-- **Resultado:** [X] Correto  [ ] Incorreto
-
-### Teste 4: Informação inexistente
-- **Pergunta:** "Quanto rende o produto BBDC3 na Bovespa?"
-- **Resposta esperada:** Agente admite não ter essa informação
-- **Resultado:** [X] Correto  [ ] Incorreto
-
----
-
-## Formulário de Feedback (Sugestão)
-
-Use com os participantes do teste:
-
-| Métrica | Pergunta | Nota (1-5) |
-|---------|----------|------------|
-| Assertividade | "As respostas responderam suas perguntas?" | ___ |
-| Segurança | "As informações pareceram confiáveis?" | ___ |
-| Coerência | "A linguagem foi clara e fácil de entender?" | ___ |
-
-**Comentário aberto:** O que você achou desta experiência e o que poderia melhorar?
-
----
-
-## Resultados
-
-Após os testes, registre suas conclusões:
-
-**O que funcionou bem:**
-- [Liste aqui]
-
-**O que pode melhorar:**
-- [Liste aqui]
+O repositório não apresenta resultados fictícios como testes executados.

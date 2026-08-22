@@ -1,103 +1,152 @@
-# 🎓 Edu - Educador Financeiro Inteligente
+# Bia do Futuro — Generative AI Financial Educator
 
-> Agente de IA Generativa que ensina conceitos de finanças pessoais de forma simples e personalizada, usando os próprios dados do cliente como exemplos práticos.
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-Chat_App-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![Ollama](https://img.shields.io/badge/Ollama-gpt--oss%3A20b-black)](https://ollama.com/library/gpt-oss%3A20b)
 
-## 💡 O Que é o Edu?
+> A local generative AI assistant that explains personal finance concepts using a fictional customer profile and mocked financial data.
 
-O Edu é um educador financeiro que **ensina**, não recomenda. Ele explica conceitos como reserva de emergência, tipos de investimentos e análise de gastos usando uma abordagem didática e exemplos concretos baseados no perfil do cliente.
+[Português](#português) · [Technical documentation](./docs/) · [DIO challenge](https://github.com/digitalinnovationone/dio-lab-bia-do-futuro)
 
-**O que o Edu faz:**
-- ✅ Explica conceitos financeiros de forma simples
-- ✅ Usa dados do cliente como exemplos práticos
-- ✅ Responde dúvidas sobre produtos financeiros
-- ✅ Analisa padrões de gastos de forma educativa
+## Overview
 
-**O que o Edu NÃO faz:**
-- ❌ Não recomenda investimentos específicos
-- ❌ Não acessa dados bancários sensíveis
-- ❌ Não substitui um profissional certificado
+Bia was developed for the **BIA do Futuro** learning challenge from DIO in partnership with Bradesco. It combines a Streamlit chat interface, a local `gpt-oss:20b` model served by Ollama, and a CSV/JSON knowledge base.
 
-## 🏗️ Arquitetura
+The assistant explains financial concepts and contextualizes fictional spending data. It does not recommend investments, access bank accounts, or use live market data.
+
+This is an independent educational project. It is not an official Bradesco or DIO product.
+
+## Engineering highlights
+
+- Local LLM integration through the Ollama Generate API
+- Streamed responses for lower perceived latency
+- Recent conversation context for follow-up questions
+- Four CSV/JSON knowledge sources loaded dynamically
+- Spending totals calculated in Python before reaching the model
+- Low-temperature generation and a restricted 4K context window
+- Guardrails against recommendations, invented values, and credential requests
+- Automated tests that do not require downloading the model
+- Eight reproducible evaluation scenarios for human review
+
+## Architecture
 
 ```mermaid
-flowchart TD
-    A[Usuário] --> B[Streamlit]
-    B --> C[Ollama - LLM Local]
-    C --> D[Base de Conhecimento]
-    D --> C
-    C --> E[Resposta Educativa]
+flowchart LR
+    U[User] --> UI[Streamlit chat]
+    UI --> CORE[Bia core]
+    DATA[Mocked CSV and JSON data] --> CORE
+    CORE --> PROMPT[Rules, calculated context and chat history]
+    PROMPT --> API[Ollama Generate API]
+    API --> MODEL[gpt-oss:20b]
+    MODEL -->|streamed response| UI
 ```
 
-**Stack:**
-- Interface: Streamlit
-- LLM: Ollama (modelo local `gpt-oss`)
-- Dados: JSON/CSV mockados
+## Requirements
 
-## 📁 Estrutura do Projeto
+- Python 3.10+
+- [Ollama](https://ollama.com/)
+- `gpt-oss:20b` model
 
-```
-├── data/                          # Base de conhecimento
-│   ├── perfil_investidor.json     # Perfil do cliente
-│   ├── transacoes.csv             # Histórico financeiro
-│   ├── historico_atendimento.csv  # Interações anteriores
-│   └── produtos_financeiros.json  # Produtos para ensino
-│
-├── docs/                          # Documentação completa
-│   ├── 01-documentacao-agente.md  # Caso de uso e persona
-│   ├── 02-base-conhecimento.md    # Estratégia de dados
-│   ├── 03-prompts.md              # System prompt e exemplos
-│   ├── 04-metricas.md             # Avaliação de qualidade
-│   └── 05-pitch.md                # Apresentação do projeto
-│
-└── src/
-    └── app.py                     # Aplicação Streamlit
-```
+The Ollama package for `gpt-oss:20b` is approximately **14 GB**. Its official model page states that it can run on systems with as little as **16 GB of memory**. For a more comfortable local CPU-based experience while the operating system and Streamlit are also running, **32 GB is the project recommendation**.
 
-## 🚀 Como Executar
+The application limits the model context to 4,096 tokens to reduce memory use and improve response time.
 
-### 1. Instalar Ollama
+## Run locally
 
-```bash
-# Baixar em: ollama.com
-ollama pull gpt-oss
+```powershell
+python -m venv .venv
+.venv\Scripts\activate
+python -m pip install -r requirements.txt
+
+ollama pull gpt-oss:20b
 ollama serve
-```
-
-### 2. Instalar Dependências
-
-```bash
-pip install streamlit pandas requests
-```
-
-### 3. Rodar o Edu
-
-```bash
 streamlit run src/app.py
 ```
 
-## 🎯 Exemplo de Uso
+Open the URL shown by Streamlit. The first response may be slower while Ollama loads the model into memory; later responses should start faster while the model remains loaded.
 
-**Pergunta:** "O que é CDI?"  
-**Edu:** "CDI é uma taxa de referência usada pelos bancos. Quando um investimento rende '100% do CDI', significa que ele acompanha essa taxa. Hoje o CDI está próximo da Selic. Quer que eu explique a diferença entre os dois?"
+To use another model already installed in Ollama:
 
-**Pergunta:** "Onde estou gastando mais?"  
-**Edu:** "Olhando suas transações de outubro, sua maior despesa é moradia (R$ 1.380), seguida de alimentação (R$ 570). Juntas, representam quase 80% dos seus gastos. Isso é bem comum! Quer que eu explique algumas estratégias de organização?"
+```powershell
+$env:BIA_OLLAMA_MODEL="another-model"
+streamlit run src/app.py
+```
 
-## 📊 Métricas de Avaliação
+## Suggested questions
 
-| Métrica | Objetivo |
-|---------|----------|
-| **Assertividade** | O agente responde o que foi perguntado? |
-| **Segurança** | Evita inventar informações (anti-alucinação)? |
-| **Coerência** | A resposta é adequada ao perfil do cliente? |
+- What is CDI?
+- Where am I spending the most?
+- How much did I spend on food?
+- How is the emergency fund progressing?
+- Explain Tesouro Selic.
+- Which product should I invest in?
 
-## 🎬 Diferenciais
+The final question validates an important safety rule: Bia must explain relevant criteria without selecting an investment.
 
-- **Personalização:** Usa os dados do próprio cliente nos exemplos
-- **100% Local:** Roda com Ollama, sem enviar dados para APIs externas
-- **Educativo:** Foco em ensinar, não em vender produtos
-- **Seguro:** Estratégias de anti-alucinação documentadas
+## Tests and evaluation
 
-## 📝 Documentação Completa
+Run the automated tests without Ollama:
 
-Toda a documentação técnica, estratégias de prompt e casos de teste estão disponíveis na pasta [`docs/`](./docs/).
+```powershell
+python -m unittest discover -s tests -v
+```
+
+After installing the model, execute all documented scenarios:
+
+```powershell
+python evaluation/run_evaluation.py
+```
+
+The evaluator saves `evaluation/latest-results.json` locally for human scoring. Generated results are ignored by Git so unreviewed outputs are not presented as evidence.
+
+## Project structure
+
+```text
+data/                         Mocked profile, transactions, products and history
+docs/                         Agent design, knowledge, prompts, metrics and pitch
+evaluation/scenarios.json     Reproducible challenge scenarios
+evaluation/run_evaluation.py  Ollama evaluation runner
+src/app.py                    Streamlit application
+src/bia_core.py               Calculations, prompt and Ollama integration
+tests/                        Automated unit tests
+requirements.txt              Python dependencies
+```
+
+---
+
+## Português
+
+A Bia é uma educadora financeira com IA generativa local. O projeto foi desenvolvido para o desafio **BIA do Futuro**, da DIO em parceria com o Bradesco.
+
+### O que a aplicação faz
+
+- Conversa com o usuário por uma interface Streamlit.
+- Executa o `gpt-oss:20b` localmente com Ollama.
+- Usa dados fictícios como contexto educacional.
+- Calcula entradas, saídas e categorias em Python.
+- Exibe a resposta do modelo progressivamente.
+- Mantém o contexto recente da conversa.
+- Explica produtos e conceitos sem recomendar onde investir.
+
+### Limites
+
+- Não acessa contas ou dados bancários reais.
+- Não consulta taxas ou cotações atuais.
+- Não revela credenciais ou dados de terceiros.
+- Não indica nem conecta o usuário a assessores.
+- Não substitui orientação de um profissional certificado.
+
+### Entregas do desafio
+
+| Etapa | Entrega |
+|---|---|
+| 1 | [Caso de uso, persona, arquitetura e segurança](./docs/01-documentacao-agente.md) |
+| 2 | [Estratégia da base de conhecimento](./docs/02-base-conhecimento.md) |
+| 3 | [System prompt, exemplos e casos-limite](./docs/03-prompts.md) |
+| 4 | [Aplicação funcional com LLM](./src/app.py) |
+| 5 | [Testes, métricas e cenários de avaliação](./docs/04-metricas.md) |
+| 6 | [Roteiro de pitch de três minutos](./docs/05-pitch.md) |
+
+### Decisões técnicas
+
+Os cálculos são feitos antes da chamada ao modelo, reduzindo erros numéricos. O prompt recebe somente um resumo dos dados e as seis mensagens mais recentes. A API do Ollama trabalha com streaming, temperatura 0,2 e contexto de 4.096 tokens para equilibrar coerência, memória e tempo de resposta.
