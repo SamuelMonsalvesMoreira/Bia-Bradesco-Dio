@@ -1,50 +1,35 @@
-# Pitch (3 minutos)
+# 5. Roteiro de pitch — 3 minutos
 
-> [!TIP]
-> Você pode usar alguns slides pra apoiar no seu Pitch e mostrar sua solução na prática.
+## 0:00–0:30 | Problema
 
-## Estrutura do Pitch
+“Planilhas mostram números, mas nem sempre ajudam uma pessoa iniciante a entender seus gastos ou termos financeiros. O desafio foi transformar dados em explicações claras sem ultrapassar o limite entre educação e recomendação.”
 
-| Tempo | Seção | O que falar |
-|-------|-------|-------------|
-| 0:00 - 0:30 | Problema | A dor que você resolve |
-| 0:30 - 1:30 | Solução | Como o Edu resolve |
-| 1:30 - 2:30 | Demo | Mostre funcionando |
-| 2:30 - 3:00 | Diferencial | Por que é inovador |
+## 0:30–1:20 | Solução
 
----
- 
-## Roteiro do Edu
+“A Bia é uma educadora financeira com IA generativa local. A aplicação lê quatro fontes de dados fictícios, calcula o resumo financeiro em Python e monta um contexto protegido. O `gpt-oss:20b`, executado pelo Ollama, produz a resposta exibida em streaming no Streamlit.”
 
-### 🎯 Problema (30 seg)
-> "62% dos brasileiros não sabem o que é reserva de emergência. Muita gente quer aprender sobre finanças, mas não sabe por onde começar — e tem medo de parecer burro perguntando."
+“O prompt impede recomendações específicas, cotações inventadas e pedidos de credenciais. Quando a pergunta exige análise individual, a Bia explica os critérios e orienta a procura de um profissional certificado.”
 
-### 💡 Solução (60 seg)
-> "O Edu é um educador financeiro que ensina de forma personalizada. Ele usa seus próprios dados para dar exemplos práticos. Não recomenda investimentos — só educa. É como ter um professor particular de finanças disponível 24h."
+## 1:20–2:20 | Demonstração
 
-### 📱 Demo (60 seg)
-> [Compartilhe a tela e faça 2-3 perguntas ao Edu]
-> - "O que é CDI?"
-> - "Onde estou gastando mais?"
-> - "Me explica o que é Tesouro Selic"
+1. Pergunte: “Quanto gastei com alimentação?”
+2. Mostre os R$ 570,00 calculados a partir do CSV.
+3. Pergunte: “Em qual produto devo investir?”
+4. Mostre que a Bia não escolhe um investimento.
 
-### ✨ Diferencial (30 seg)
-> "Diferente de chatbots genéricos, o Edu usa SEUS dados como exemplo. Isso torna o aprendizado concreto. E o melhor: roda 100% local, sem custo e sem enviar seus dados pra ninguém."
+Se o hardware usado na apresentação não executar o modelo com boa velocidade, grave previamente essas duas interações na máquina compatível e use o vídeo como evidência.
 
----
+## 2:20–3:00 | Engenharia
 
-## Checklist do Pitch
+“Separei a interface do núcleo, calculei os valores fora do LLM e limitei o contexto para reduzir memória. Também implementei streaming, histórico recente, tratamento de erros, testes automatizados e oito cenários de avaliação.”
 
-- [ ] Duração máxima de 3 minutos
-- [ ] Problema claramente definido
-- [ ] Solução demonstrada na prática
-- [ ] Diferencial explicado
-- [ ] Áudio e vídeo com boa qualidade
+“O projeto demonstra integração com LLM local, engenharia de prompt, dados estruturados, segurança e uma estratégia honesta de avaliação.”
 
----
+## Checklist
 
-## Link do Vídeo
-
-> Cole aqui o link do seu pitch (YouTube, Loom, Google Drive, etc.)
-
-[Link do vídeo]
+- Ollama e modelo carregados antes da gravação
+- Duas perguntas ensaiadas
+- Fonte e zoom legíveis
+- Duração abaixo de três minutos
+- Nenhuma informação pessoal visível
+- Áudio e respostas revisados

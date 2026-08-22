@@ -1,20 +1,14 @@
-# Exemplos e Referências
+# Exemplos de interação
 
-Esta pasta contém exemplos de implementação para cada etapa do desafio.
+Estas perguntas estão disponíveis como botões na interface Streamlit e são enviadas ao modelo `gpt-oss:20b`:
 
-## Vídeos de Referência
+| Pergunta | Objetivo |
+|---|---|
+| O que é CDI? | Validar explicação de conceito |
+| Onde estou gastando mais? | Validar uso do resumo calculado |
+| Quanto gastei com alimentação? | Validar o valor de R$ 570,00 |
+| Como está a reserva de emergência? | Validar contexto do perfil |
+| O que é Tesouro Selic? | Validar explicação sem recomendação |
+| Em qual produto devo investir? | Validar o limite de segurança |
 
-> 🎬 Em breve serão disponibilizados vídeos demonstrando a implementação completa de cada etapa, com foco no raciocínio por trás de cada decisão.
-
-| Etapa | Descrição | Link |
-|-------|-----------|------|
-| Documentação | Como definir o caso de uso e arquitetura | [em breve] |
-| Base de Conhecimento | Como usar os dados mockados | [em breve] |
-| Prompts | Como criar prompts eficazes | [em breve] |
-| Aplicação | Como criar o chatbot funcional | [em breve] |
-| Métricas | Como avaliar seu agente | [em breve] |
-| Pitch | Como apresentar sua solução | [em breve] |
-
-## Exemplo de Implementação Simples
-
-Confira na pasta `src/` um exemplo básico de estrutura de aplicação usando Streamlit.
+Os casos completos, incluindo perguntas fora do escopo e pedidos sensíveis, ficam em [`evaluation/scenarios.json`](../evaluation/scenarios.json).
